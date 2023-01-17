@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chess
+namespace Chess.Entities
 {
-	public class Program
+	public class ChessBoard
 	{
-		static void Main(string[] args)
-		{
 
-		}
 	}
 }
