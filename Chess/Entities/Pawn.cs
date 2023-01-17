@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Chess.Entities.Enum;
+using Chess.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Chess.Entities
 {
-	public class Pawn : IChessPiece
+    public class Pawn : IChessPiece
 	{
 		public string Id { get; set; }
 		public ChessPieceColor Color { get; set; }
@@ -30,7 +32,7 @@ namespace Chess.Entities
 
 		public List<string> Move(string currentPosition)
 		{
-			int[] realPosition = Utils.GetRealPosition(currentPosition);
+			int[] realPosition = Util.GetRealPosition(currentPosition);
 			int currentLinePosition = realPosition[0], currentColumnPosition = realPosition[1], newLinePosition, newColumnPosition;
 			List<string> possibleMoves = new List<string>();
 			string possiblePosition;
@@ -40,14 +42,14 @@ namespace Chess.Entities
 				newColumnPosition = Color.Equals(ChessPieceColor.WHITE) ? 
 					currentColumnPosition - 2 :
 					currentColumnPosition + 2;
-				possibleMoves.Add(Utils.NominatePosition(currentLinePosition,newColumnPosition));
+				possibleMoves.Add(Util.NominatePosition(currentLinePosition,newColumnPosition));
 				IsFirstMove = false;
 			}
 
 			newColumnPosition = Color.Equals(ChessPieceColor.WHITE) ?
 					currentColumnPosition - 1 :
 					currentColumnPosition + 1;
-			possibleMoves.Add(Utils.NominatePosition(currentLinePosition, newColumnPosition));
+			possibleMoves.Add(Util.NominatePosition(currentLinePosition, newColumnPosition));
 
 			return possibleMoves;
 		}

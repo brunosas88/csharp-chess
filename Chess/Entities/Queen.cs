@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Chess.Entities.Enum;
 
 namespace Chess.Entities
 {
-	internal class Queen : IChessPiece
+    internal class Queen : IChessPiece
 	{
 		public string Id { get; set; }
 		public ChessPieceColor Color { get; set; }
