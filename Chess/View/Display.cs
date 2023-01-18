@@ -13,6 +13,7 @@ namespace Chess.View
 	{
 		public static void PrintBoard(ChessPieceInfo[,] board)
 		{
+			Console.Clear();
 			char[] colReference = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' };
 			char[] rowReference = { '8', '7', '6', '5', '4', '3', '2', '1' };
 			List<ConsoleColor> colors = new List<ConsoleColor> { ConsoleColor.Gray, ConsoleColor.DarkGray };
@@ -34,7 +35,7 @@ namespace Chess.View
 					Console.BackgroundColor = isDarkerColor? colors[0] : colors[1];
 
 					Console.Write(" ");
-					Console.ForegroundColor = board[row, col].Color.Equals(ChessPieceColor.WHITE) ? ConsoleColor.White : ConsoleColor.Black;
+					Console.ForegroundColor = board[row, col].Color == ChessPieceColor.WHITE ? ConsoleColor.White : ConsoleColor.Black;
 					Console.Write(board[row, col].Sprite);
 					Console.ForegroundColor = Constants.MAIN_FOREGROUND_COLOR;
 					Console.Write(" ");			

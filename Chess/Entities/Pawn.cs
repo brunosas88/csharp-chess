@@ -37,14 +37,14 @@ namespace Chess.Entities
 
 			if (IsFirstMove)
 			{
-				newLinePosition = Color.Equals(ChessPieceColor.WHITE) ?
+				newLinePosition = Color == ChessPieceColor.WHITE ?
 					currentLinePosition - 2 :
 					currentLinePosition + 2;
 				possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));
 				IsFirstMove = false;
 			}
 
-			newLinePosition = Color.Equals(ChessPieceColor.WHITE) ?
+			newLinePosition = Color == ChessPieceColor.WHITE ?
 					currentLinePosition - 1 :
 					currentLinePosition + 1;
 			possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));

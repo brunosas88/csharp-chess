@@ -15,45 +15,83 @@ namespace Chess
 	{
 		public static void Main(string[] args)
 		{
+			// iniciar posições
 			ChessBoard board = new ChessBoard();
 			List<IChessPiece> inGamePieces = InitializeChessPieces();
-			List<ChessPieceInfo> infoGamePieces = InitializeInfoChessPieces(inGamePieces);
-			board.UpdateBoard(infoGamePieces);
-			Display.PrintBoard(board.Board);
-
-			string position = Console.ReadLine();
-
-			var piece = inGamePieces.Find(piece => piece.Position == position);
-			List<string> possibleMoves = piece.Move(position);
-			foreach (var item in possibleMoves)
+			List<ChessPieceInfo> infoGamePieces = UpdateInfoChessPieces(inGamePieces);
+			List<string> blackCapturedPieces = new List<string>();
+			List<string> whiteCapturedPieces = new List<string>();
+			// jogo 
+			do
 			{
-				Console.WriteLine(item);
-			}
-
-			position = Console.ReadLine();
-
-			piece = inGamePieces.Find(piece => piece.Position == position);
-			possibleMoves = piece.Move(position);
-			foreach (var item in possibleMoves)
-			{
-				Console.WriteLine(item);
-			}
-
+				// mostrar tabuleiro com peças
+				board.UpdateBoard(infoGamePieces);
+				Display.PrintBoard(board.Board);
+				Console.Write($"\nPeças Pretas Capturadas: [");
+				foreach (var item in blackCapturedPieces)
+					Console.Write($" - {item} - ");
+				Console.Write("]\n");
+				Console.Write($"\nPeças Brancas Capturadas: [");
+				foreach (var item in whiteCapturedPieces)
+					Console.Write($" - {item} - ");
+				Console.Write("]\n");
+				// pegar posição do usuario
+				Console.Write("\nInsira posição: ");
+				string originalPosition = Console.ReadLine();
+				// encontrar peça na posição
+				var pieceToMove = inGamePieces.Find(piece => piece.Position == originalPosition);
+				// verificar os possíveis movimentos
+				List<string> possibleMoves = pieceToMove.Move(originalPosition);
+				// mostrar possiveis movimentos
+				Console.Write("\nMovimentos Possiveis: [");				
+				foreach (var item in possibleMoves)			
+					Console.Write($" -{item}- ");
+				Console.Write("]\n");
+				// escolher entre os movimentos possiveis
+				string newPosition = Console.ReadLine();			
+				// verificar se houve captura e mudar posição da peça
+				infoGamePieces = UpdateGamePieces(inGamePieces, pieceToMove, originalPosition, newPosition, ref blackCapturedPieces, ref whiteCapturedPieces);			
+				
+			} while (true);
 		}
 
-		public static List<ChessPieceInfo> InitializeInfoChessPieces(List<IChessPiece> inGamePieces)
+		private static List<ChessPieceInfo> UpdateGamePieces(List<IChessPiece> inGamePieces, IChessPiece pieceToMove, string originalPosition, string? newPosition, ref List<string> blackCapturedPieces, ref List<string> whiteCapturedPieces)
+		{
+			bool existsCapturedPiece = inGamePieces.Exists(capturedPiece => capturedPiece.Position == newPosition && capturedPiece.Color != pieceToMove.Color);
+
+			if (existsCapturedPiece)
+			{
+				var pieceToRemove = inGamePieces.Find(piece => piece.Position == newPosition);
+				pieceToRemove.Position = "-1";
+				pieceToRemove.IsCaptured = true;
+
+				if (pieceToRemove.Color != ChessPieceColor.WHITE)
+					blackCapturedPieces.Add(pieceToRemove.Sprite);
+				else
+					whiteCapturedPieces.Add(pieceToRemove.Sprite);
+			}
+
+			pieceToMove.Position = newPosition;
+
+			return UpdateInfoChessPieces(inGamePieces);
+		}
+
+		public static List<ChessPieceInfo> UpdateInfoChessPieces(List<IChessPiece> inGamePieces)
 		{
 			List<ChessPieceInfo> piecesInfoList = new();
 			ChessPieceInfo newPiece = new();
 
 			foreach (IChessPiece piece in inGamePieces)
 			{
-				newPiece.Position = piece.Position;
-				newPiece.Color = piece.Color;
-				newPiece.Sprite = piece.Sprite;
-				piecesInfoList.Add(newPiece);
-			}
+				if (!piece.IsCaptured)
+				{
+					newPiece.Position = piece.Position;
+					newPiece.Color = piece.Color;
+					newPiece.Sprite = piece.Sprite;
+					piecesInfoList.Add(newPiece);
+				}
 
+			}
 			return piecesInfoList;
 		}
 
