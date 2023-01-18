@@ -22,7 +22,7 @@ namespace Chess.Utils
 			string nominatedLine = Constants.LINE_REFERENCE.First(entries => entries.Value == line).Key;
 			string nominatedColumn = Constants.COLUMN_REFERENCE.First(entries => entries.Value == column).Key;
 
-			return nominatedLine + nominatedColumn;
+			return nominatedColumn + nominatedLine;
 		}
 	}
 }

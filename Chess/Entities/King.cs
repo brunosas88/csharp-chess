@@ -15,6 +15,15 @@ namespace Chess.Entities
 		public string Sprite { get; set; }
 		public bool IsCaptured { get; set; }
 
+
+		public King(ChessPieceColor color, string position, string sprite)
+		{
+			Color = color;
+			Position = position;
+			Sprite = sprite;
+			IsCaptured = false;
+		}
+
 		public List<string> Move(string currentPosition)
 		{
 			throw new NotImplementedException();

@@ -18,9 +18,8 @@ namespace Chess.Entities
 		public bool IsPromoted { get; set; }
 		public bool IsFirstMove { get; private set; }
 
-		public Pawn(string id, ChessPieceColor color, string position, string sprite)
+		public Pawn(ChessPieceColor color, string position, string sprite)
 		{
-			Id = id;
 			Color = color;
 			Position = position;
 			Sprite = sprite;
@@ -33,23 +32,22 @@ namespace Chess.Entities
 		public List<string> Move(string currentPosition)
 		{
 			int[] realPosition = Util.GetRealPosition(currentPosition);
-			int currentLinePosition = realPosition[0], currentColumnPosition = realPosition[1], newLinePosition, newColumnPosition;
-			List<string> possibleMoves = new List<string>();
-			string possiblePosition;
+			int currentLinePosition = realPosition[0], currentColumnPosition = realPosition[1], newLinePosition;
+			List<string> possibleMoves = new List<string>();			
 
 			if (IsFirstMove)
 			{
-				newColumnPosition = Color.Equals(ChessPieceColor.WHITE) ? 
-					currentColumnPosition - 2 :
-					currentColumnPosition + 2;
-				possibleMoves.Add(Util.NominatePosition(currentLinePosition,newColumnPosition));
+				newLinePosition = Color.Equals(ChessPieceColor.WHITE) ?
+					currentLinePosition - 2 :
+					currentLinePosition + 2;
+				possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));
 				IsFirstMove = false;
 			}
 
-			newColumnPosition = Color.Equals(ChessPieceColor.WHITE) ?
-					currentColumnPosition - 1 :
-					currentColumnPosition + 1;
-			possibleMoves.Add(Util.NominatePosition(currentLinePosition, newColumnPosition));
+			newLinePosition = Color.Equals(ChessPieceColor.WHITE) ?
+					currentLinePosition - 1 :
+					currentLinePosition + 1;
+			possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));
 
 			return possibleMoves;
 		}
