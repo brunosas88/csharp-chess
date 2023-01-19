@@ -1,4 +1,5 @@
 ﻿using Chess.Entities.Enum;
+using Chess.Entities.Struct;
 using Chess.Utils;
 using System;
 using System.Collections.Generic;
@@ -29,27 +30,71 @@ namespace Chess.Entities
 			Color = color;
 		}
 
-		public List<string> Move(string currentPosition)
+		public List<string> Move(string currentPosition, List<ChessPieceInfo> infoGamePieces)
 		{
 			int[] realPosition = Util.GetRealPosition(currentPosition);
-			int currentLinePosition = realPosition[0], currentColumnPosition = realPosition[1], newLinePosition;
-			List<string> possibleMoves = new List<string>();			
+			int currentLinePosition = realPosition[0], currentColumnPosition = realPosition[1], newLinePosition, newColumnPosition;
+			string newPosition, leftDiagonalPosition, rightDiagonalPosition;
+			bool isMovimentPossible;
+			List<string> possibleMoves = new List<string>();
 
-			if (IsFirstMove)
+			newLinePosition = Color == ChessPieceColor.WHITE ?
+			currentLinePosition - 1 :
+			currentLinePosition + 1;
+			newPosition = Util.NominatePosition(newLinePosition, currentColumnPosition);
+			isMovimentPossible = CheckMove(infoGamePieces, newPosition, possibleMoves);
+
+			if (IsFirstMove && isMovimentPossible)
 			{
 				newLinePosition = Color == ChessPieceColor.WHITE ?
 					currentLinePosition - 2 :
 					currentLinePosition + 2;
-				possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));
+				newPosition = Util.NominatePosition(newLinePosition, currentColumnPosition);
+				CheckMove(infoGamePieces, newPosition, possibleMoves);
 				IsFirstMove = false;
 			}
 
-			newLinePosition = Color == ChessPieceColor.WHITE ?
-					currentLinePosition - 1 :
-					currentLinePosition + 1;
-			possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));
+			CheckAtack(infoGamePieces, currentLinePosition, currentColumnPosition, possibleMoves);
 
 			return possibleMoves;
+		}
+
+		private void CheckAtack(List<ChessPieceInfo> infoGamePieces, int currentLinePosition, int currentColumnPosition, List<string> possibleMoves)
+		{
+			string leftDiagonalPosition;
+			string rightDiagonalPosition;
+
+			if(currentColumnPosition > 0 && currentColumnPosition < 8)
+			{
+				
+				leftDiagonalPosition = Color == ChessPieceColor.WHITE ? 
+					Util.NominatePosition(currentLinePosition - 1, currentColumnPosition - 1) :
+					Util.NominatePosition(currentLinePosition + 1, currentColumnPosition - 1);
+
+				if ((infoGamePieces.Exists(piece => piece.Position == leftDiagonalPosition && piece.Color != this.Color)))
+					possibleMoves.Add(leftDiagonalPosition);
+			}
+			
+			if (currentColumnPosition >= 0 && currentColumnPosition < 7)
+			{
+				rightDiagonalPosition = Color == ChessPieceColor.WHITE ?
+					Util.NominatePosition(currentLinePosition - 1, currentColumnPosition + 1) :
+					Util.NominatePosition(currentLinePosition + 1, currentColumnPosition + 1);
+				if ((infoGamePieces.Exists(piece => piece.Position == rightDiagonalPosition && piece.Color != this.Color)))
+					possibleMoves.Add(rightDiagonalPosition);
+			}
+		}
+
+		private bool CheckMove(List<ChessPieceInfo> infoGamePieces, string newPosition, List<string> possibleMoves)
+		{
+
+			if (!infoGamePieces.Exists(piece => piece.Position == newPosition))
+			{
+				possibleMoves.Add(newPosition);
+				return true;
+			}
+			else
+				return false;			
 		}
 
 

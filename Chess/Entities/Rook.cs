@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Chess.Entities.Enum;
+using Chess.Entities.Struct;
 using Chess.Utils;
 
 namespace Chess.Entities
@@ -24,41 +25,64 @@ namespace Chess.Entities
 			IsCaptured = false;
 		}
 
-		public List<string> Move(string currentPosition)
+		public List<string> Move(string currentPosition, List<ChessPieceInfo> infoGamePieces)
 		{
 			int[] realPosition = Util.GetRealPosition(currentPosition);
 			int currentLinePosition = realPosition[0], currentColumnPosition = realPosition[1], newLinePosition, newColumnPosition;
+			string newPosition;
 			List<string> possibleMoves = new List<string>();
 
 			newLinePosition = currentLinePosition;
 			for (int up = currentLinePosition; up > 0; up--)
 			{
 				newLinePosition -= 1;
-				possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));				
+				newPosition = Util.NominatePosition(newLinePosition, currentColumnPosition);
+
+				if (!CheckMove(infoGamePieces, newPosition, possibleMoves)) break;
 			}
 
 			newLinePosition = currentLinePosition;
 			for (int down = currentLinePosition; down < 7; down++)
 			{
 				newLinePosition += 1;
-				possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));
+				newPosition = Util.NominatePosition(newLinePosition, currentColumnPosition);
+
+				if (!CheckMove(infoGamePieces, newPosition, possibleMoves)) break;
 			}
 
 			newColumnPosition = currentColumnPosition;
 			for (int right = currentColumnPosition; right < 7; right++)
 			{
 				newColumnPosition += 1;
-				possibleMoves.Add(Util.NominatePosition(currentLinePosition, newColumnPosition));
+				newPosition = Util.NominatePosition(currentLinePosition, newColumnPosition);
+				if (!CheckMove(infoGamePieces, newPosition, possibleMoves)) break;
 			}
 
 			newColumnPosition = currentColumnPosition;
 			for (int left = currentColumnPosition; left > 0; left--)
 			{
 				newColumnPosition -= 1;
-				possibleMoves.Add(Util.NominatePosition(currentLinePosition, newColumnPosition));
+				newPosition = Util.NominatePosition(currentLinePosition, newColumnPosition);
+				if (!CheckMove(infoGamePieces, newPosition, possibleMoves)) break;
 			}
 
 			return possibleMoves;
+		}
+
+		private bool CheckMove(List<ChessPieceInfo> infoGamePieces, string newPosition, List<string> possibleMoves)
+		{
+			if (infoGamePieces.Exists(piece => piece.Position == newPosition && piece.Color == this.Color))
+				return false;			
+			else if (infoGamePieces.Exists(piece => piece.Position == newPosition && piece.Color != this.Color))
+			{
+				possibleMoves.Add(newPosition);
+				return false;
+			}
+			else
+			{
+				possibleMoves.Add(newPosition);
+				return true;
+			}			
 		}
 	}
 }

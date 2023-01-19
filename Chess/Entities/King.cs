@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Chess.Entities.Enum;
+using Chess.Entities.Struct;
 using Chess.Utils;
 
 namespace Chess.Entities
@@ -25,55 +26,48 @@ namespace Chess.Entities
 			IsCaptured = false;
 		}
 
-		public List<string> Move(string currentPosition)
+		public List<string> Move(string currentPosition, List<ChessPieceInfo> infoGamePieces)
 		{
 			int[] realPosition = Util.GetRealPosition(currentPosition);
 			int currentLinePosition = realPosition[0], currentColumnPosition = realPosition[1], newLinePosition, newColumnPosition;
 			int up, left, right, down;
+			string newPosition;
 			List<string> possibleMoves = new List<string>();
 
-			newLinePosition = currentLinePosition;
-			newColumnPosition = currentColumnPosition;
-			up = currentLinePosition;
-			left = currentColumnPosition;
-			if( up > 0 && left > 0)
+			ResetValues(currentLinePosition, currentColumnPosition, out newLinePosition, out newColumnPosition, out up, out left, out right, out down);
+			if (up > 0 && left > 0)
 			{
 				newLinePosition -= 1;
 				newColumnPosition -= 1;
-				possibleMoves.Add(Util.NominatePosition(newLinePosition, newColumnPosition));
+				newPosition = Util.NominatePosition(newLinePosition, newColumnPosition);
+				CheckMove(infoGamePieces, newPosition, possibleMoves);
 			}
 
-			newLinePosition = currentLinePosition;
-			newColumnPosition = currentColumnPosition;
-			up = currentLinePosition;
-			right = currentColumnPosition;
+			ResetValues(currentLinePosition, currentColumnPosition, out newLinePosition, out newColumnPosition, out up, out left, out right, out down);
 			if (up > 0 && right < 7)
 			{
 				newLinePosition -= 1;
 				newColumnPosition += 1;
-				possibleMoves.Add(Util.NominatePosition(newLinePosition, newColumnPosition));
+				newPosition = Util.NominatePosition(newLinePosition, newColumnPosition);
+				CheckMove(infoGamePieces, newPosition, possibleMoves);
 			}
 
-			newLinePosition = currentLinePosition;
-			newColumnPosition = currentColumnPosition;
-			down = currentLinePosition;
-			left = currentColumnPosition;
+			ResetValues(currentLinePosition, currentColumnPosition, out newLinePosition, out newColumnPosition, out up, out left, out right, out down);
 			if (down < 7 && left > 0)
 			{
 				newLinePosition += 1;
 				newColumnPosition -= 1;
-				possibleMoves.Add(Util.NominatePosition(newLinePosition, newColumnPosition));
+				newPosition = Util.NominatePosition(newLinePosition, newColumnPosition);
+				CheckMove(infoGamePieces, newPosition, possibleMoves);
 			}
 
-			newLinePosition = currentLinePosition;
-			newColumnPosition = currentColumnPosition;
-			down = currentLinePosition;
-			right = currentColumnPosition;
+			ResetValues(currentLinePosition, currentColumnPosition, out newLinePosition, out newColumnPosition, out up, out left, out right, out down);
 			if (down < 7 && right < 7)
 			{
 				newLinePosition += 1;
 				newColumnPosition += 1;
-				possibleMoves.Add(Util.NominatePosition(newLinePosition, newColumnPosition));
+				newPosition = Util.NominatePosition(newLinePosition, newColumnPosition);
+				CheckMove(infoGamePieces, newPosition, possibleMoves);
 			}
 
 			newLinePosition = currentLinePosition;
@@ -81,7 +75,8 @@ namespace Chess.Entities
 			if (up > 0)
 			{
 				newLinePosition -= 1;
-				possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));
+				newPosition = Util.NominatePosition(newLinePosition, currentColumnPosition);
+				CheckMove(infoGamePieces, newPosition, possibleMoves);
 			}
 
 			newLinePosition = currentLinePosition;
@@ -89,7 +84,8 @@ namespace Chess.Entities
 			if (down < 7)
 			{
 				newLinePosition += 1;
-				possibleMoves.Add(Util.NominatePosition(newLinePosition, currentColumnPosition));
+				newPosition = Util.NominatePosition(newLinePosition, currentColumnPosition);
+				CheckMove(infoGamePieces, newPosition, possibleMoves);
 			}
 
 			newColumnPosition = currentColumnPosition;
@@ -97,7 +93,8 @@ namespace Chess.Entities
 			if (right < 7)
 			{
 				newColumnPosition += 1;
-				possibleMoves.Add(Util.NominatePosition(currentLinePosition, newColumnPosition));
+				newPosition = Util.NominatePosition(currentLinePosition, newColumnPosition);
+				CheckMove(infoGamePieces, newPosition, possibleMoves);
 			}
 
 			newColumnPosition = currentColumnPosition;
@@ -105,10 +102,37 @@ namespace Chess.Entities
 			if (left > 0)
 			{
 				newColumnPosition -= 1;
-				possibleMoves.Add(Util.NominatePosition(currentLinePosition, newColumnPosition));
+				newPosition = Util.NominatePosition(currentLinePosition, newColumnPosition);
+				CheckMove(infoGamePieces, newPosition, possibleMoves);
 			}
 
 			return possibleMoves;
+		}
+
+		private void ResetValues(int currentLinePosition, int currentColumnPosition, out int newLinePosition, out int newColumnPosition, out int up, out int left, out int right, out int down)
+		{
+			newLinePosition = currentLinePosition;
+			newColumnPosition = currentColumnPosition;
+			up = currentLinePosition;
+			left = currentColumnPosition;
+			down = currentLinePosition;
+			right = currentColumnPosition;
+		}
+
+		private bool CheckMove(List<ChessPieceInfo> infoGamePieces, string newPosition, List<string> possibleMoves)
+		{
+			if (infoGamePieces.Exists(piece => piece.Position == newPosition && piece.Color == this.Color))
+				return false;
+			else if (infoGamePieces.Exists(piece => piece.Position == newPosition && piece.Color != this.Color))
+			{
+				possibleMoves.Add(newPosition);
+				return false;
+			}
+			else
+			{
+				possibleMoves.Add(newPosition);
+				return true;
+			}
 		}
 	}
 }

@@ -21,9 +21,11 @@ namespace Chess
 			List<ChessPieceInfo> infoGamePieces = UpdateInfoChessPieces(inGamePieces);
 			List<string> blackCapturedPieces = new List<string>();
 			List<string> whiteCapturedPieces = new List<string>();
+			List<string> possibleMovesWithoutExistentPieces = new List<string>();
 			// jogo 
 			do
 			{
+				possibleMovesWithoutExistentPieces.Clear();
 				// mostrar tabuleiro com peças
 				board.UpdateBoard(infoGamePieces);
 				Display.PrintBoard(board.Board);
@@ -41,10 +43,18 @@ namespace Chess
 				// encontrar peça na posição
 				var pieceToMove = inGamePieces.Find(piece => piece.Position == originalPosition);
 				// verificar os possíveis movimentos
-				List<string> possibleMoves = pieceToMove.Move(originalPosition);
+				List<string> allPossibleMoves = pieceToMove.Move(originalPosition, infoGamePieces);				
+				
+				for (int i = 0; i < allPossibleMoves.Count; i++)
+				{
+					if (!infoGamePieces.Exists(info => info.Position == allPossibleMoves[i] && info.Color == pieceToMove.Color))
+						possibleMovesWithoutExistentPieces.Add(allPossibleMoves[i]);
+				}
+
+
 				// mostrar possiveis movimentos
 				Console.Write("\nMovimentos Possiveis: [");				
-				foreach (var item in possibleMoves)			
+				foreach (var item in possibleMovesWithoutExistentPieces)			
 					Console.Write($" -{item}- ");
 				Console.Write("]\n");
 				// escolher entre os movimentos possiveis

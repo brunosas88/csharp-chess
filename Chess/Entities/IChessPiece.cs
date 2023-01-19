@@ -4,18 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Chess.Entities.Enum;
+using Chess.Entities.Struct;
 
 namespace Chess.Entities
 {
     public interface IChessPiece
 	{
-		public string Id { get; set; }
-		public ChessPieceColor Color { get; set; }
-		public string Position { get; set; }
-		public string Sprite { get; set; }
-		public bool IsCaptured { get; set; }
+		string Id { get; set; }
+		ChessPieceColor Color { get; set; }
+		string Position { get; set; }
+		string Sprite { get; set; }
+		bool IsCaptured { get; set; }
 
-		public List<string> Move(string currentPosition);
+		List<string> Move(string currentPosition, List<ChessPieceInfo> infoGamePieces);
 
 	}
 }
