@@ -9,15 +9,8 @@ using Chess.Utils;
 
 namespace Chess.Entities
 {
-    public class King : IChessPiece
+    public class King : ChessPiece
 	{
-		public string Id { get; set; }
-		public ChessPieceColor Color { get; set; }
-		public string Position { get; set; }
-		public string Sprite { get; set; }
-		public bool IsCaptured { get; set; }
-
-
 		public King(ChessPieceColor color, string position, string sprite)
 		{
 			Color = color;
@@ -26,7 +19,7 @@ namespace Chess.Entities
 			IsCaptured = false;
 		}
 
-		public List<string> Move(string currentPosition, List<ChessPieceInfo> infoGamePieces)
+		public override List<string> Move(string currentPosition, List<ChessPieceInfo> infoGamePieces)
 		{
 			int[] realPosition = Util.GetRealPosition(currentPosition);
 			int currentLinePosition = realPosition[0], currentColumnPosition = realPosition[1], newLinePosition, newColumnPosition;

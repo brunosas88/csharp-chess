@@ -17,7 +17,7 @@ namespace Chess
 		{
 			// iniciar posições
 			ChessBoard board = new ChessBoard();
-			List<IChessPiece> inGamePieces = InitializeChessPieces();
+			List<ChessPiece> inGamePieces = InitializeChessPieces();
 			List<ChessPieceInfo> infoGamePieces = UpdateInfoChessPieces(inGamePieces);
 			List<string> blackCapturedPieces = new List<string>();
 			List<string> whiteCapturedPieces = new List<string>();
@@ -42,19 +42,11 @@ namespace Chess
 				string originalPosition = Console.ReadLine();
 				// encontrar peça na posição
 				var pieceToMove = inGamePieces.Find(piece => piece.Position == originalPosition);
-				// verificar os possíveis movimentos
-				List<string> allPossibleMoves = pieceToMove.Move(originalPosition, infoGamePieces);				
-				
-				for (int i = 0; i < allPossibleMoves.Count; i++)
-				{
-					if (!infoGamePieces.Exists(info => info.Position == allPossibleMoves[i] && info.Color == pieceToMove.Color))
-						possibleMovesWithoutExistentPieces.Add(allPossibleMoves[i]);
-				}
-
-
+				// encontrar os possíveis movimentos
+				List<string> allPossibleMoves = pieceToMove.Move(originalPosition, infoGamePieces);			
 				// mostrar possiveis movimentos
 				Console.Write("\nMovimentos Possiveis: [");				
-				foreach (var item in possibleMovesWithoutExistentPieces)			
+				foreach (var item in allPossibleMoves)			
 					Console.Write($" -{item}- ");
 				Console.Write("]\n");
 				// escolher entre os movimentos possiveis
@@ -65,7 +57,7 @@ namespace Chess
 			} while (true);
 		}
 
-		private static List<ChessPieceInfo> UpdateGamePieces(List<IChessPiece> inGamePieces, IChessPiece pieceToMove, string originalPosition, string? newPosition, ref List<string> blackCapturedPieces, ref List<string> whiteCapturedPieces)
+		private static List<ChessPieceInfo> UpdateGamePieces(List<ChessPiece> inGamePieces, ChessPiece pieceToMove, string originalPosition, string? newPosition, ref List<string> blackCapturedPieces, ref List<string> whiteCapturedPieces)
 		{
 			bool existsCapturedPiece = inGamePieces.Exists(capturedPiece => capturedPiece.Position == newPosition && capturedPiece.Color != pieceToMove.Color);
 
@@ -86,12 +78,12 @@ namespace Chess
 			return UpdateInfoChessPieces(inGamePieces);
 		}
 
-		public static List<ChessPieceInfo> UpdateInfoChessPieces(List<IChessPiece> inGamePieces)
+		public static List<ChessPieceInfo> UpdateInfoChessPieces(List<ChessPiece> inGamePieces)
 		{
 			List<ChessPieceInfo> piecesInfoList = new();
 			ChessPieceInfo newPiece = new();
 
-			foreach (IChessPiece piece in inGamePieces)
+			foreach (ChessPiece piece in inGamePieces)
 			{
 				if (!piece.IsCaptured)
 				{
@@ -105,7 +97,7 @@ namespace Chess
 			return piecesInfoList;
 		}
 
-		public static List<IChessPiece> InitializeChessPieces()
+		public static List<ChessPiece> InitializeChessPieces()
 		{			
 			// Creating king pieces
 			King kingW = new King(ChessPieceColor.WHITE, "e1", Constants.KING_SPRITE);
@@ -146,7 +138,7 @@ namespace Chess
 			Pawn pawnBG = new Pawn(ChessPieceColor.BLACK, "g7", Constants.PAWN_SPRITE);
 			Pawn pawnBH = new Pawn(ChessPieceColor.BLACK, "h7", Constants.PAWN_SPRITE);
 
-			return new List<IChessPiece>() 
+			return new List<ChessPiece>() 
 			{	kingW, kingB, queenW, queenB, bishopWC, bishopWF, bishopBC, bishopBF, knightWB, knightWG,
 				knightBB, knightBG, rookWA, rookWH, rookBA, rookBH, pawnWA, pawnWB, pawnWC, pawnWD, pawnWE,
 				pawnWF, pawnWG, pawnWH, pawnBA, pawnBB, pawnBC, pawnBD, pawnBE, pawnBF, pawnBG, pawnBH
